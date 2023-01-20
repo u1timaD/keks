@@ -1,19 +1,13 @@
+import {makeAdverts} from './mocks.js';
+// import {}
+// import {OFFERS_COUNT} from './data.js';
+// import {similarCard} from './template.js';
+// import {disableAdvertForm} from './form.js';
+// import './map.js';
 
-const getRandomPositiveInteger = (a, b) => {
-  const lower = Math.ceil(Math.min(Math.abs(a), Math.abs(b)));
-  const upper = Math.floor(Math.max(Math.abs(a), Math.abs(b)));
-  const result =  Math.random() * (upper - lower + 1) + lower;
-  return result;
-};
+// const mapCanvas = document.querySelector('#map-canvas');
+// mapCanvas.append(similarCard(makeAdverts(OFFERS_COUNT)[0]));
 
-console.log(getRandomPositiveInteger(5, 10));
+// disableAdvertForm();
 
-
-const getRandomPositiveFloat = (a, b, digits) => {
-  const lower = Math.ceil(Math.min(Math.abs(a), Math.abs(b)));
-  const upper = Math.floor(Math.max(Math.abs(a), Math.abs(b)));
-  const result = Math.random() * (upper - lower) + lower;
-  return +result.toFixed(digits);
-};
-
-console.log(getRandomPositiveFloat(1, 200, 5));
+console.log(makeAdverts(10));
