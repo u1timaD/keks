@@ -9,9 +9,12 @@ const makeLocation = () => ({
 
 const generateId = () => {
   let currentId = 0;
+  // let currentArr = [];
   return () => {
     currentId += 1;
-    return currentId;
+    return currentId
+    // currentArr.push(currentId)
+    // return currentArr;
   };
 };
 

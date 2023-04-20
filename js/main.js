@@ -10,4 +10,6 @@ import {makeAdverts} from './mocks.js';
 
 // disableAdvertForm();
 
+// eslint-disable-next-line no-console
 console.log(makeAdverts(10));
+console.log('Приве')
