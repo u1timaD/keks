@@ -1,5 +1,6 @@
 import { makeAdverts } from './mocks.js';
-
+import { OFFERS_COUNT } from './data.js';
+import { getRandomPositiveInteger } from './util.js';
 
 const typeHouses = {
   bungalow: 'Бунгало',
@@ -9,63 +10,59 @@ const typeHouses = {
   palace: 'Дворец',
 };
 
+// Всё заменить на одну функцию, которая принимает на вход массив объектов
+// и выбирает перый, если первый одинаковый всегда, выбирает любой из массива
 
-let mapCanvas = document.querySelector('.map__canvas');
-let templateCard = document.querySelector('#card').content;
-let popup = templateCard.querySelector('.popup');
+const advertice = makeAdverts(OFFERS_COUNT);
 
-let clonePopup = popup.cloneNode(true);
+const mapCanvas = document.querySelector('.map__canvas');
+const templateFragment = document.querySelector('#card').content;
+const template = templateFragment.querySelector('.popup');
+const fragment = document.createDocumentFragment();
+console.log(advertice[2])
+// let avatar = document.querySelector('.popup__avatar');
+// const TITLE = document.querySelector('.popup__title');
+// const ADDRESS = document.querySelector('.popup__text--address');
+// const PRICE = document.querySelector('.popup__text--price');
+// const TYPE = document.querySelector('.popup__type');
+// const CAPACITY = document.querySelector('.popup__text--capacity');
+// const TIME = document.querySelector('.popup__text--time');
+// const FEATURE = document.querySelector('.popup__features');
+// const DESCRIPTION = document.querySelector('.popup__description');
+// const PHOTO = document.querySelector('.popup__photos');
 
-let offerName = makeAdverts(1)[0].offer;
+for (let i=0; i<1; i++) {
+  const element = template.cloneNode(true);
+  const link = advertice[2]['offer']; //2 - второй элемент массива объектов
 
-let img = clonePopup.querySelector('img');
-img.src = makeAdverts(1)[0].author;
-let popupTitle = clonePopup.querySelector('.popup__title');
-popupTitle.textContent = offerName.title;
+  element.querySelector('.popup__avatar').src = advertice[2]['author']; // 2 - фторая фотка
+  element.querySelector('.popup__title').textContent = link['title'];
+  element.querySelector('.popup__text--address').textContent = link['address'];
+  element.querySelector('.popup__text--price').textContent = `${link['price']} ₽/ночь`;
+  element.querySelector('.popup__type').textContent = typeHouses[link['type']];
+  element.querySelector('.popup__text--capacity').textContent = `${link['rooms']} комнаты для ${link['guests']} гостей`;
+  element.querySelector('.popup__text--time').textContent = `Заезд после ${link['checkin']}, выезд до ${link['checkout']}`;
 
-let popupAddress = clonePopup.querySelector('.popup__text--address');
-popupAddress.textContent = offerName.address;
-let popupPrice = clonePopup.querySelector('.popup__text--price');
-popupPrice.textContent = `${offerName.price} ₽/ночь`;
+  const feature = element.querySelectorAll('.popup__feature');
+  feature.forEach((elem) => {
+    const hasFeature = link['features'].some((item) => elem.classList.contains('popup__feature--' + item));
 
-let popupType = clonePopup.querySelector('.popup__type');
-popupType.textContent = typeHouses[offerName.type];
+    if(!hasFeature) {
+      elem.remove();
+    }
+  });
 
-let popupСapacity = clonePopup.querySelector('.popup__text--capacity');
-popupСapacity.textContent = `${offerName.rooms} комнаты для ${offerName.guests} гостей`;
-
-let popupTime = clonePopup.querySelector('.popup__text--time');
-popupTime.textContent = `Заезд после ${offerName.checkin}, выезд до ${offerName.checkout}`;
-
-// Вывести удобства
-let popupFeaturesList = clonePopup.querySelector('.popup__features');
-let popupFeatures = popupFeaturesList.querySelectorAll('.popup__feature');
-
-popupFeatures.forEach((feature) => {
-  let featuresTehnics = offerName.features;
-
-  const nessesary = featuresTehnics.some((technic) => feature.classList.contains('popup__feature--' + technic));
-
-  if(!nessesary) {
-    feature.remove();
+  element.querySelector('.popup__description').textContent = link['description'];
+  if(link['photos'][0] === undefined) {
+    element.querySelector('.popup__photo').remove();
+    element.querySelector('.popup__photos').insertAdjacentHTML('afterbegin', '<p style="color: red">Упс ... Фотки нет</p>');
+  } else{
+    element.querySelector('.popup__photo').src = link['photos'][0];
   }
-});
 
-// console.log(popupFeature);
+  fragment.appendChild(element);
+}
 
-let popupDescription = clonePopup.querySelector('.popup__description');
-popupDescription.textContent = offerName.description;
-
-let popupPhoto = clonePopup.querySelector('.popup__photo');
-popupPhoto.src = offerName.photos;
-
-
-
-let newElement = mapCanvas.appendChild(clonePopup);
-
-// console.log(img.src);
-// console.log(popupTitle);
-
-// console.log(makeAdverts(1)[0].author);
+mapCanvas.appendChild(fragment);
 
 // console.log(makeAdverts(10));
