@@ -8,6 +8,10 @@ const mapForm = document.querySelector('.map__filters');
 const mapFilters = document.querySelectorAll('.map__filter');
 const mapFeatures = document.querySelector('.map__features');
 
+const formTitle = document.querySelector('#title');
+const flatType = document.querySelector('#type');
+const flatCost = document.querySelector('#price');
+
 const formIsDisabled = function() {
   addForm.classList.add('ad-form--disabled');
   mapForm.classList.add('.map__filters--disabled');
@@ -60,6 +64,8 @@ const formIsActive = function() {
 //     }
 //   }
 // }
+
+
 const flatPrice = {
   bungalow : '0',
   flat : '1000',
@@ -69,55 +75,123 @@ const flatPrice = {
 };
 
 const changePrice = function (flat) {
-  const flatType = document.getElementById('type');
-  const flatCost = document.getElementById('price');
+  let count = flatCost.placeholder;
   flatType.addEventListener('change', (evt) => {
     flatCost.min = flat[evt.target.value];
     flatCost.placeholder = flat[evt.target.value];
   });
+  return count;
 };
 changePrice(flatPrice);
 
+const pristine = new Pristine(addForm, {
+  classTo: 'ad-form__element', // Элемент, на который будут добавляться классы
+  errorClass: 'ad-form__element--invalid', // Класс, обозначающий невалидное поле
+  successClass: 'ad-form__element--valid', // Класс, обозначающий валидное поле
+  errorTextParent: 'ad-form__element', // Элемент, куда будет выводиться текст с ошибкой
+  errorTextTag: 'span', // Тег, который будет обрамлять текст ошибки
+  errorTextClass: 'form__error' // Класс для элемента с текстом ошибки,
+});
 
+function rangeTitle (value) {
+  return value.length >= 2 && value.length <= 100000;
+}
 
-  const timeIn = document.getElementById('timein');
-  const timeOut = document.getElementById('timeout');
+function rangeCost (value) {
+  return +(value) >= +(flatCost.placeholder) && value < 100000;
+}
 
-function mergeTime (select, value) {
-  if(select.id === 'timein') {
-    for(const i of timeOut) {
-      if(i.value === value) {
-        i.selected = true;
-      }
-    }
+function textCost (value) {
+  if(value > 100000) {
+    return 'Цена не больше 100000';
   } else {
-    for(const i of timeIn) {
-      if(i.value === value) {
-        i.selected = true;
-      }
-    }
+    return `цена за ночь от ${+(flatCost.placeholder)}`;
   }
 }
 
-const generateTime = function (evt) {
-  mergeTime(evt.target, evt.target.value);
-};
-
-const changeTimes = function () {
-  timeIn.addEventListener('change', generateTime);
-  timeOut.addEventListener('change', generateTime);
-};
-changeTimes();
+pristine.addValidator(formTitle, rangeTitle, 'введите от 30 до 100 символов');
+pristine.addValidator(flatCost, rangeCost, textCost);
 
 
-
-
-
-
+addForm.addEventListener('submit', (evt) => {
+  evt.preventDefault();
+  const isValid = pristine.validate();
+  // if(isValid) {
+  //   console.log("Можно отправлять")
+  // } else {
+  //   console.log('Нельзя отправлять')
+  // }
+});
 
 
 
 
+
+const timeIn = document.getElementById('timein');
+const timeOut = document.getElementById('timeout');
+
+timeIn.addEventListener('change', ()=> {
+  timeOut.value = timeIn.value;
+});
+
+timeOut.addEventListener('change', () => {
+  timeIn.value = timeOut.value;
+});
+
+// ПРЕДЫДУЩИЙ МОЙ ВАРИАНТ ИСПОЛНЕНИЯ
+// function mergeTime (select, value) {
+//   if(select.id === 'timein') {
+//     for(const i of timeOut) {
+//       if(i.value === value) {
+//         i.selected = true;
+//       }
+//     }
+//   } else {
+//     for(const i of timeIn) {
+//       if(i.value === value) {
+//         i.selected = true;
+//       }
+//     }
+//   }
+// }
+
+// const generateTime = function (evt) {
+//   mergeTime(evt.target, evt.target.value);
+// };
+
+// const changeTimes = function () {
+//   timeIn.addEventListener('change', generateTime);
+//   timeOut.addEventListener('change', generateTime);
+// };
+// changeTimes();
+
+
+
+
+const roomNum = document.querySelector('#room_number');
+const capacityNum = document.querySelector('#capacity');
+
+const roomElem = roomNum.options;
+// console.log(roomNum[roomElem.selectedIndex])
+
+roomNum.addEventListener('change', () => {
+  if(roomNum.value >= capacityNum.value) {
+    console.log(`отличаная компната для ${roomNum.value} человека или меньше`)
+  } else {
+    console.log('Слишком много народу для такой комнатушки')
+  }
+})
+
+
+capacityNum.addEventListener('change', () => {
+  if(capacityNum.value <= roomNum.value) {
+    console.log(`для ${capacityNum.value} человек эта комната в самый раз`)
+  } else {
+    console.log(`вы не поместитесь в ${roomNum.value} комнате`)
+  }
+
+
+})
 
 
 
