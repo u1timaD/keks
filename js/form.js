@@ -66,7 +66,7 @@ const formIsActive = function() {
 // }
 
 
-const flatPrice = {
+const FLAT_PRICE = {
   bungalow : '0',
   flat : '1000',
   hotel : '3000',
@@ -75,14 +75,16 @@ const flatPrice = {
 };
 
 const changePrice = function (flat) {
-  let count = flatCost.placeholder;
+  const count = flatCost.placeholder;
   flatType.addEventListener('change', (evt) => {
     flatCost.min = flat[evt.target.value];
     flatCost.placeholder = flat[evt.target.value];
   });
   return count;
 };
-changePrice(flatPrice);
+changePrice(FLAT_PRICE);
+
+
 
 const pristine = new Pristine(addForm, {
   classTo: 'ad-form__element', // Элемент, на который будут добавляться классы
@@ -93,42 +95,29 @@ const pristine = new Pristine(addForm, {
   errorTextClass: 'form__error' // Класс для элемента с текстом ошибки,
 });
 
-function rangeTitle (value) {
-  return value.length >= 2 && value.length <= 100000;
-}
+const rangeTitle = (value) => value.length >= 2 && value.length <= 100000;
 
-function rangeCost (value) {
-  return +(value) >= +(flatCost.placeholder) && value < 100000;
-}
+const rangeCost = (value) => +(value) >= +(flatCost.placeholder) && value < 100000;
 
-function textCost (value) {
-  if(value > 100000) {
-    return 'Цена не больше 100000';
-  } else {
-    return `цена за ночь от ${+(flatCost.placeholder)}`;
-  }
-}
+const textCost = (value) => (value >= 100000) ? 'Цена не больше 100000' : `цена за ночь от ${+(flatCost.placeholder)}`;
 
 pristine.addValidator(formTitle, rangeTitle, 'введите от 30 до 100 символов');
 pristine.addValidator(flatCost, rangeCost, textCost);
 
-
 addForm.addEventListener('submit', (evt) => {
   evt.preventDefault();
   const isValid = pristine.validate();
-  // if(isValid) {
-  //   console.log("Можно отправлять")
-  // } else {
-  //   console.log('Нельзя отправлять')
-  // }
+  if(isValid) {
+    console.log("Можно отправлять")
+  } else {
+    console.log('Нельзя отправлять')
+  }
 });
 
 
 
-
-
-const timeIn = document.getElementById('timein');
-const timeOut = document.getElementById('timeout');
+const timeIn = document.querySelector('#timein');
+const timeOut = document.querySelector('#timeout');
 
 timeIn.addEventListener('change', ()=> {
   timeOut.value = timeIn.value;
@@ -138,61 +127,27 @@ timeOut.addEventListener('change', () => {
   timeIn.value = timeOut.value;
 });
 
-// ПРЕДЫДУЩИЙ МОЙ ВАРИАНТ ИСПОЛНЕНИЯ
-// function mergeTime (select, value) {
-//   if(select.id === 'timein') {
-//     for(const i of timeOut) {
-//       if(i.value === value) {
-//         i.selected = true;
-//       }
-//     }
-//   } else {
-//     for(const i of timeIn) {
-//       if(i.value === value) {
-//         i.selected = true;
-//       }
-//     }
-//   }
-// }
 
-// const generateTime = function (evt) {
-//   mergeTime(evt.target, evt.target.value);
-// };
+// Валидация комнат и гостей
+const roomNumber = document.querySelector('#room_number');
+const capacity = document.querySelector('#capacity');
 
-// const changeTimes = function () {
-//   timeIn.addEventListener('change', generateTime);
-//   timeOut.addEventListener('change', generateTime);
-// };
-// changeTimes();
+const ROOMS_GUESTS_OPTIONS = {
+  '1': ['1'],
+  '2': ['2', '1'],
+  '3': ['3', '2', '1'],
+  '100': ['0'],
+};
 
+const validationSettlement = () => ROOMS_GUESTS_OPTIONS[roomNumber.value].includes(capacity.value);
 
+const getRoomErrorMessage = () => 'Выбери другое количество гостей';
 
+pristine.addValidator(capacity, validationSettlement, getRoomErrorMessage);
 
-const roomNum = document.querySelector('#room_number');
-const capacityNum = document.querySelector('#capacity');
-
-const roomElem = roomNum.options;
-// console.log(roomNum[roomElem.selectedIndex])
-
-roomNum.addEventListener('change', () => {
-  if(roomNum.value >= capacityNum.value) {
-    console.log(`отличаная компната для ${roomNum.value} человека или меньше`)
-  } else {
-    console.log('Слишком много народу для такой комнатушки')
-  }
-})
-
-
-capacityNum.addEventListener('change', () => {
-  if(capacityNum.value <= roomNum.value) {
-    console.log(`для ${capacityNum.value} человек эта комната в самый раз`)
-  } else {
-    console.log(`вы не поместитесь в ${roomNum.value} комнате`)
-  }
-
-
-})
-
+roomNumber.addEventListener('change', () => {
+  pristine.validate(capacity);
+});
 
 
 
