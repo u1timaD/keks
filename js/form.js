@@ -8,6 +8,10 @@ const mapForm = document.querySelector('.map__filters');
 const mapFilters = document.querySelectorAll('.map__filter');
 const mapFeatures = document.querySelector('.map__features');
 
+const formTitle = document.querySelector('#title');
+const flatType = document.querySelector('#type');
+const flatCost = document.querySelector('#price');
+
 const formIsDisabled = function() {
   addForm.classList.add('ad-form--disabled');
   mapForm.classList.add('.map__filters--disabled');
@@ -60,7 +64,9 @@ const formIsActive = function() {
 //     }
 //   }
 // }
-const flatPrice = {
+
+
+const FLAT_PRICE = {
   bungalow : '0',
   flat : '1000',
   hotel : '3000',
@@ -69,56 +75,79 @@ const flatPrice = {
 };
 
 const changePrice = function (flat) {
-  const flatType = document.getElementById('type');
-  const flatCost = document.getElementById('price');
+  const count = flatCost.placeholder;
   flatType.addEventListener('change', (evt) => {
     flatCost.min = flat[evt.target.value];
     flatCost.placeholder = flat[evt.target.value];
   });
+  return count;
 };
-changePrice(flatPrice);
+changePrice(FLAT_PRICE);
 
 
 
-  const timeIn = document.getElementById('timein');
-  const timeOut = document.getElementById('timeout');
+const pristine = new Pristine(addForm, {
+  classTo: 'ad-form__element', // Элемент, на который будут добавляться классы
+  errorClass: 'ad-form__element--invalid', // Класс, обозначающий невалидное поле
+  successClass: 'ad-form__element--valid', // Класс, обозначающий валидное поле
+  errorTextParent: 'ad-form__element', // Элемент, куда будет выводиться текст с ошибкой
+  errorTextTag: 'span', // Тег, который будет обрамлять текст ошибки
+  errorTextClass: 'form__error' // Класс для элемента с текстом ошибки,
+});
 
-function mergeTime (select, value) {
-  if(select.id === 'timein') {
-    for(const i of timeOut) {
-      if(i.value === value) {
-        i.selected = true;
-      }
-    }
+const rangeTitle = (value) => value.length >= 2 && value.length <= 100000;
+
+const rangeCost = (value) => +(value) >= +(flatCost.placeholder) && value < 100000;
+
+const textCost = (value) => (value >= 100000) ? 'Цена не больше 100000' : `цена за ночь от ${+(flatCost.placeholder)}`;
+
+pristine.addValidator(formTitle, rangeTitle, 'введите от 30 до 100 символов');
+pristine.addValidator(flatCost, rangeCost, textCost);
+
+addForm.addEventListener('submit', (evt) => {
+  evt.preventDefault();
+  const isValid = pristine.validate();
+  if(isValid) {
+    console.log("Можно отправлять")
   } else {
-    for(const i of timeIn) {
-      if(i.value === value) {
-        i.selected = true;
-      }
-    }
+    console.log('Нельзя отправлять')
   }
-}
+});
 
-const generateTime = function (evt) {
-  mergeTime(evt.target, evt.target.value);
+
+
+const timeIn = document.querySelector('#timein');
+const timeOut = document.querySelector('#timeout');
+
+timeIn.addEventListener('change', ()=> {
+  timeOut.value = timeIn.value;
+});
+
+timeOut.addEventListener('change', () => {
+  timeIn.value = timeOut.value;
+});
+
+
+// Валидация комнат и гостей
+const roomNumber = document.querySelector('#room_number');
+const capacity = document.querySelector('#capacity');
+
+const ROOMS_GUESTS_OPTIONS = {
+  '1': ['1'],
+  '2': ['2', '1'],
+  '3': ['3', '2', '1'],
+  '100': ['0'],
 };
 
-const changeTimes = function () {
-  timeIn.addEventListener('change', generateTime);
-  timeOut.addEventListener('change', generateTime);
-};
-changeTimes();
+const validationSettlement = () => ROOMS_GUESTS_OPTIONS[roomNumber.value].includes(capacity.value);
 
+const getRoomErrorMessage = () => 'Выбери другое количество гостей';
 
+pristine.addValidator(capacity, validationSettlement, getRoomErrorMessage);
 
-
-
-
-
-
-
-
-
+roomNumber.addEventListener('change', () => {
+  pristine.validate(capacity);
+});
 
 
 
