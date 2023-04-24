@@ -242,8 +242,6 @@ fieldset {
 /* Форма для публикации объявления
    ========================================================================== */
 
-
-
 .notice {
   margin: 0 120px;
   padding: 30px 0;
@@ -265,6 +263,10 @@ fieldset {
       flex-wrap: wrap;
 
   width: 100%;
+}
+
+.form__error {
+  color: red;
 }
 
 .ad-form--disabled {
@@ -407,6 +409,31 @@ fieldset {
 
 .ad-form__element--time select:first-of-type {
   margin-right: 14px;
+}
+
+.ad-form__slider.noUi-target:not(#fake-id) {
+  width: calc(100% - 20px);
+  height: 5px;
+  transform: translateY(-2px);
+}
+
+.ad-form__slider:not(#fake-id) .noUi-connect {
+  background-color: #353535;
+}
+
+.ad-form__slider:not(#fake-id) .noUi-handle {
+  border-radius: 50%;
+  width: 12px;
+  height: 12px;
+  right: -5px;
+  top: -5px;
+  cursor: grab;
+  background-color: #999999;
+}
+
+.ad-form__slider:not(#fake-id) .noUi-handle::after,
+.ad-form__slider:not(#fake-id) .noUi-handle::before {
+  display: none;
 }
 
 .features legend {
@@ -1029,17 +1056,4 @@ fieldset {
 
 .hidden {
   display: none;
-}
-
-
-.form__error {
-  color: red;
-  font-size: 15px;
-  font-style: italic;
-  text-transform: uppercase;
-  padding: 2px;
-}
-
-.ad-form__element--invalid > input {
-  background-color: rgba(50, 4, 240, 0.2)
 }

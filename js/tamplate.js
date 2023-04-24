@@ -63,6 +63,6 @@ for (let i=0; i<1; i++) {
   fragment.appendChild(element);
 }
 
-mapCanvas.appendChild(fragment);
+// mapCanvas.appendChild(fragment);
 
 // console.log(makeAdverts(10));
