@@ -11,6 +11,8 @@ const mapFeatures = document.querySelector('.map__features');
 const formTitle = document.querySelector('#title');
 const flatType = document.querySelector('#type');
 const flatCost = document.querySelector('#price');
+const address = document.querySelector('#address');
+
 
 const formIsDisabled = function() {
   addForm.classList.add('ad-form--disabled');
@@ -64,6 +66,11 @@ const formIsActive = function() {
 //     }
 //   }
 // }
+
+// const getAddress = () => {
+//   address.textContent =
+// }
+// address
 
 
 const FLAT_PRICE = {
@@ -180,3 +187,6 @@ function submitForm() {
 }
 
 // submitForm()
+
+
+export {pristine};
