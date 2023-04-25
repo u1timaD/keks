@@ -187,3 +187,6 @@ function submitForm() {
 }
 
 // submitForm()
+
+
+export {pristine};

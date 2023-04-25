@@ -1,22 +1,24 @@
 import {FLAT_COST_MAX, START_PRICE_VALUE, FLAT_PRICE} from './data.js';
+import {pristine} from './form.js';
 
-const sliderBox = document.querySelector('.ad-form__slider');
+const sliderPrice = document.querySelector('.ad-form__slider');
 const price = document.querySelector('#price');
 const type = document.querySelector('#type');
 
-price.value = START_PRICE_VALUE;
-
-noUiSlider.create(sliderBox, {
+noUiSlider.create(sliderPrice, {
   range: {
     min: 0,
     max: FLAT_COST_MAX,
   },
-  start: price.value,
+  start: price.placeholder,
   step: 1,
   connect: 'lower',
   format: {
     to: function (value) {
-      return value;
+      if (Number.isInteger(value)) {
+        return value.toFixed(0);
+      }
+      return value.toFixed(0);
     },
     from: function (value) {
       return parseFloat(value);
@@ -24,32 +26,29 @@ noUiSlider.create(sliderBox, {
   },
 });
 
+const resetSlider = () => {
+  sliderPrice.noUiSlider.reset();
+};
 
-sliderBox.noUiSlider.on('update', () => {
-  price.value = sliderBox.noUiSlider.get();
+// Доделать слайдер, чтобы выводил 0
+// реализовать всё про карту
+sliderPrice.noUiSlider.on('slide', () => {
+  price.value = sliderPrice.noUiSlider.get();
+  pristine.validate(price);
 });
 
 type.addEventListener('change', (evt) => {
-
   if (evt.target.value) {
-    sliderBox.noUiSlider.updateOptions({
+    sliderPrice.noUiSlider.updateOptions({
       range: {
         min: Number(FLAT_PRICE[evt.target.value]),
         max: FLAT_COST_MAX,
       },
       start: Number(FLAT_PRICE[evt.target.value]),
-      step: 1
-    });
-
-  } else {
-    sliderBox.noUiSlider.updateOptions({
-      range: {
-        min: 0,
-        max: 100,
-      },
-      step: 1
     });
   }
 });
 
+
+export {resetSlider};
 
